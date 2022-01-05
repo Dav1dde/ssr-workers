@@ -1,0 +1,9 @@
+[workspace]
+members = [
+    "app",
+    "worker"
+]
+
+[profile.release]
+opt-level = "z"
+lto = true

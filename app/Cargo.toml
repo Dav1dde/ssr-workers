@@ -1,0 +1,17 @@
+[package]
+name = "app"
+version = "0.1.0"
+authors = ["David Herberth <github@dav1d.de>"]
+edition = "2021"
+
+[features]
+default = ["client"]
+ssr = ["sycamore/ssr"]
+client = ["sycamore/experimental-hydrate", "web-sys"]
+
+[dependencies]
+sycamore = "0.7"
+web-sys = { version = "0.3", optional = true }
+console_error_panic_hook = "0.1"
+console_log = "0.2"
+log = "0.4"

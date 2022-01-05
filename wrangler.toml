@@ -1,0 +1,23 @@
+name = "ssr-workers"
+type = "javascript"
+workers_dev = true
+compatibility_date = "2022-01-05"
+
+[vars]
+WORKERS_RS_VERSION = "0.0.7"
+
+[build]
+command = "cargo install -q worker-build && cd app && trunk build && cd ../worker && worker-build --release" # required
+
+[build.upload]
+dir    = "worker/build/worker"
+format = "modules"
+main   = "./shim.mjs"
+
+[[build.upload.rules]]
+globs = ["worker/**/*.wasm"]
+type  = "CompiledWasm"
+
+[site]
+bucket = "./app/dist"
+
