@@ -15,7 +15,7 @@ The demo needs:
 Running locally:
 
 ```sh
-$ npx miniflare
+$ npx miniflare@next
 ```
 
 Building just the app:
@@ -23,6 +23,15 @@ Building just the app:
 ```sh
 $ cd app
 $ trunk build # or watch
+```
+
+Watching for changes of the worker:
+
+```sh
+$ cd worker
+$ cargo watch -- worker-build --dev
+# Second Terminal
+$ npx miniflare@next --watch
 ```
 
 ## Notes:
@@ -34,6 +43,9 @@ $ trunk build # or watch
   layer.
 * A very minimal setup already needs `500kb` of only `1000kb` available, this might not leave
   enough space for an actual application.
-* I dont currently have a way to watch the files and auto-reload the worker, this is annoying!
+* ~~I dont currently have a way to watch the files and auto-reload the worker, this is annoying!~~
 * The app entrypoint needs `sycamore::hydrate_to`, this does not work in standalone mode without
   SSR, this is annoying!
+* A lot of APIs are missing, incomplete or not usable (e.g. needs git version to access KV value as
+  bytes, no cache API).
+* workers-rs feels like a PoC not like something people actually used.

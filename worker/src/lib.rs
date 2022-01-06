@@ -1,9 +1,9 @@
-use worker::*;
+use worker::{console_log, event, kv::KvStore, Method, Date, Env, Request, Response, Result};
 
 mod assets;
 mod utils;
 
-fn log_request(req: &Request) {
+fn log_request(req: &worker::Request) {
     console_log!(
         "{} - [{}], located at: {:?}, within: {}",
         Date::now().to_string(),
@@ -21,23 +21,20 @@ pub async fn main(req: Request, env: Env) -> Result<Response> {
 
     utils::set_panic_hook();
 
-    let router = Router::new();
+    if req.method() != Method::Get {
+        return Response::error("Invalid Method", 405);
+    }
 
-    router
-        .get_async("/*path", |req, ctx| async move {
-            let kv = ctx.kv("__STATIC_CONTENT")?;
+    let kv = KvStore::from_this(&env, "__STATIC_CONTENT")?;
 
-            if req.path() == "/" {
-                let index = kv.get("index.html").text().await?.expect("index html");
-                let index = index.replace("%app%", &app::render_to_string());
+    if assets::is_asset_path(&req.path()) {
+        return assets::serve_asset(req, kv).await;
+    }
 
-                // for some reason this clone is required to not turn the html to garbage ???
-                #[allow(clippy::redundant_clone)]
-                Response::from_html(index.clone())
-            } else {
-                assets::serve_asset(req, kv).await
-            }
-        })
-        .run(req, env)
-        .await
+    let index = kv.get("index.html").text().await?.expect("index html");
+    let index = index.replace("%app%", &app::render_to_string());
+
+    // for some reason this clone is required to not turn the html to garbage ???
+    #[allow(clippy::redundant_clone)]
+    Response::from_html(index.clone())
 }

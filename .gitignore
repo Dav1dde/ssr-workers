@@ -3,3 +3,4 @@
 wasm-pack.log
 build/
 dist/
+node_modules
