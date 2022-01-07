@@ -1,4 +1,4 @@
-use worker::{console_log, event, kv::KvStore, Method, Date, Env, Request, Response, Result};
+use worker::{console_log, event, Date, Env, Method, Request, Response, Result};
 
 mod assets;
 mod utils;
@@ -25,7 +25,7 @@ pub async fn main(req: Request, env: Env) -> Result<Response> {
         return Response::error("Invalid Method", 405);
     }
 
-    let kv = KvStore::from_this(&env, "__STATIC_CONTENT")?;
+    let kv = env.kv("__STATIC_CONTENT")?;
 
     if assets::is_asset_path(&req.path()) {
         return assets::serve_asset(req, kv).await;

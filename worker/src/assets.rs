@@ -39,5 +39,5 @@ fn get_mime(path: &str) -> Option<&'static str> {
         _ => return None,
     };
 
-    return Some(ct);
+    Some(ct)
 }
